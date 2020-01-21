@@ -1,3 +1,5 @@
+package application;
+
 public class Projectile extends Entity {
     private int damage;
     private Type type;

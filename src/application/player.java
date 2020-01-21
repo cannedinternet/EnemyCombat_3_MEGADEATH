@@ -1,3 +1,5 @@
+package application;
+
 public class player extends Entity{
     private int health;
     //private boolean powerUP;

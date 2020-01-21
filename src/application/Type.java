@@ -1,3 +1,5 @@
+package application;
+
 public enum Type {
     ;
     boolean CANNON, EXPLOSIVE, LASER, TRAP;

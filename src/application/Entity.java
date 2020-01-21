@@ -1,3 +1,5 @@
+package application;
+
 public class Entity {
     protected String sprintID, name; // object ID
     protected int xPosition,yPosition,speed;
