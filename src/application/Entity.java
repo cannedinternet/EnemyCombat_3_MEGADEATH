@@ -1,10 +1,33 @@
 package application;
 
-public class Entity {
+import javafx.geometry.Bounds;
+import javafx.scene.image.Image;
+import javafx.scene.image.ImageView;
+import javafx.scene.shape.Shape;
+
+public class Entity extends Shape{
     protected String sprintID, name; // object ID
     protected int xPosition,yPosition,speed;
+    protected Image img;
+    protected ImageView display;
 
-    public String getSprintID() {
+    public Image getImg() {
+		return img;
+	}
+
+	public void setImg(Image img) {
+		this.img = img;
+	}
+
+	public ImageView getDisplay() {
+		return display;
+	}
+
+	public void setDisplay(ImageView display) {
+		this.display = display;
+	}
+
+	public String getSprintID() {
         return sprintID;
     }
 
@@ -35,4 +58,14 @@ public class Entity {
     public void setName(String name) {
         this.name = name;
     }
+    
+    public boolean intersects(Bounds b) {
+    	return this.getBoundsInLocal().contains(b);
+    }
+
+	@Override
+	public com.sun.javafx.geom.Shape impl_configShape() {
+		// TODO Auto-generated method stub
+		return null;
+	}
 }
