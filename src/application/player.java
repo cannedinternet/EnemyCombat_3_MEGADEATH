@@ -4,14 +4,14 @@ public class player extends Entity{
     private int health;
     //private boolean powerUP;
 
-
-    public player(String sprintID, String name) {
-        this.sprintID = sprintID;
+    //id player
+    public player(int spritID, String name) {
+        this.spritID = spritID;
         this.name = name;
     }
 
-    public player(String sprintID, String name, int health, int xPosition, int yPosition) {
-        this.sprintID = sprintID;
+    public player(int sprintID, String name, int health, int xPosition, int yPosition) {
+        this.spritID = sprintID;
         this.name = name;
         this.health = health;
         this.xPosition = xPosition;

@@ -1,11 +1,11 @@
 package application;
 
 public class Entity {
-    protected String sprintID, name; // object ID
-    protected int xPosition,yPosition,speed;
+    protected String name; // object ID
+    protected int xPosition,yPosition,speed,spritID;
 
-    public String getSprintID() {
-        return sprintID;
+    public int getSprintID() {
+        return spritID;
     }
 
     public int getXPosition() {
@@ -24,8 +24,8 @@ public class Entity {
         this.yPosition = yPosition;
     }
 
-    public void setSprintID(String sprintID) {
-        this.sprintID = sprintID;
+    public void setSprintID(int sprintID) {
+        this.spritID = sprintID;
     }
 
     public String getName() {

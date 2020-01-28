@@ -25,4 +25,3 @@ public class Projectile extends Entity {
         this.type = type;
     }
 }
-//hhuhu
