@@ -1,10 +1,12 @@
 package application;
 
 import javafx.scene.image.Image;
+import javafx.scene.layout.Pane;
 
 public class Map {
 	private int w,h;
 	public Map(String mapID) {
+		Pane map = new Pane();
 		
 	}
 	public void create(String mapID) {
