@@ -1,16 +1,16 @@
 package application;
 
-public class player extends Entity{
+public class Player extends Entity{
     private int health;
     //private boolean powerUP;
 
     //id player
-    public player(int spritID, String name) {
+    public Player(int spritID, String name) {
         this.spritID = spritID;
         this.name = name;
     }
 
-    public player(int sprintID, String name, int health, int xPosition, int yPosition) {
+    public Player(int sprintID, String name, int health, int xPosition, int yPosition) {
         this.spritID = sprintID;
         this.name = name;
         this.health = health;
