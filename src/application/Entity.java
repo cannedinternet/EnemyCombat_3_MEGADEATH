@@ -6,7 +6,7 @@ import javafx.scene.image.ImageView;
 import javafx.scene.shape.Shape;
 
 public class Entity extends Shape{
-    protected String sprintID, name; // object ID
+    protected String spriteID, name; // object ID
     protected int xPosition,yPosition,speed;
     protected Image img;
     protected ImageView display;
@@ -27,8 +27,8 @@ public class Entity extends Shape{
 		this.display = display;
 	}
 
-	public String getSprintID() {
-        return sprintID;
+	public String getspriteID() {
+        return spriteID;
     }
 
     public int getXPosition() {
@@ -47,8 +47,8 @@ public class Entity extends Shape{
         this.yPosition = yPosition;
     }
 
-    public void setSprintID(int sprintID) {
-        this.spritID = sprintID;
+    public void setspriteID(String spriteID) {
+        this.spriteID = spriteID;
     }
 
     public String getName() {
