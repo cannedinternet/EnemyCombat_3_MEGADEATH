@@ -6,12 +6,12 @@ public class Player extends Entity{
 
     //id player
     public Player(int spritID, String name) {
-        this.spritID = spritID;
+        this.spriteID = spriteID;
         this.name = name;
     }
 
     public Player(int sprintID, String name, int health, int xPosition, int yPosition) {
-        this.spritID = sprintID;
+        this.spriteID = spriteID;
         this.name = name;
         this.health = health;
         this.xPosition = xPosition;
