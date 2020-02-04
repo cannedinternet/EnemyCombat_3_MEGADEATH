@@ -47,8 +47,8 @@ public class Entity extends Shape{
         this.yPosition = yPosition;
     }
 
-    public void setSprintID(String sprintID) {
-        this.sprintID = sprintID;
+    public void setSprintID(int sprintID) {
+        this.spritID = sprintID;
     }
 
     public String getName() {
