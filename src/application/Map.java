@@ -15,7 +15,8 @@ public class Map {
 		for(int i = 0; i < h; i++)
 			for(int j = 0; j < w; j++) {
 				Integer pixel = mapImg.getPixelReader().getArgb(j, i);
-				addWall(new Wall(), j, i);
+				if(pixel != 0)
+					addWall(new Wall(), j, i);
 			}
 	}
 	public void addWall(Wall wall, int xPos, int yPos) {
