@@ -15,8 +15,12 @@ public class Map {
 		for(int i = 0; i < h; i++)
 			for(int j = 0; j < w; j++) {
 				Integer pixel = mapImg.getPixelReader().getArgb(j, i);
-				map.add
+				addWall(new Wall(), j, i);
 			}
 	}
+	public void addWall(Wall wall, int xPos, int yPos) {
+		
+	}
+	
 	public Image crSp(String file) {return new Image(getClass().getResourceAsStream("/" + file + ".png"));}
 }
