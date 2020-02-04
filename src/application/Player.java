@@ -1,7 +1,6 @@
 package application;
 
 public class Player extends Entity{
-    private int health;
     //private boolean powerUP;
 
     //id player

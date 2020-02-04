@@ -7,10 +7,18 @@ import javafx.scene.shape.Shape;
 
 public class Entity extends Shape{
     protected String spriteID, name; // object ID
-    protected int xPosition,yPosition,speed;
+    protected int xPosition,yPosition,speed,health;
     protected Image img;
     protected ImageView display;
 
+    public int getHealth() {
+    	return health;
+    }
+    
+    public void setHealth(int health) {
+    	this.health = health;
+    }
+    
     public Image getImg() {
 		return img;
 	}

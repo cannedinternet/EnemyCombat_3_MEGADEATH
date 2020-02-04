@@ -1,16 +1,11 @@
 package application;
 
-public class Block extends Entity{
+public class Wall extends Entity{
 	private boolean solid;
 	
-	public Block() {
+	public Wall() {
 		
 	}
-
-	public boolean isSolid() {
-		return solid;
-	}
-
 	public void setSolid(boolean solid) {
 		this.solid = solid;
 	}
