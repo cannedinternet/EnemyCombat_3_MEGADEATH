@@ -29,7 +29,7 @@ public class Client extends Application {
             System.out.println(ip);
             System.out.println(ipAddress.getHostName());
 
-            //starting menue
+            //starting menu
 
             Button p1 = new Button("1 player");
             Button p2 = new Button("3 players");

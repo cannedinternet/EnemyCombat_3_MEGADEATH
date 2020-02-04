@@ -5,12 +5,12 @@ public class Player extends Entity{
     //private boolean powerUP;
 
     //id player
-    public Player(int spritID, String name) {
+    public Player(String spriteID, String name) {
         this.spriteID = spriteID;
         this.name = name;
     }
 
-    public Player(int sprintID, String name, int health, int xPosition, int yPosition) {
+    public Player(String spriteID, String name, int health, int xPosition, int yPosition) {
         this.spriteID = spriteID;
         this.name = name;
         this.health = health;

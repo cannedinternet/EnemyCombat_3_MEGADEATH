@@ -4,9 +4,10 @@ public class Projectile extends Entity {
     private int damage;
     private Type type;
 
-    public Projectile(int damage, Type type) {
+    public Projectile(int damage, Type type, String spriteID) {
         this.damage = damage;
         this.type = type;
+        this.spriteID = spriteID;
     }
 
     public int getDamage() {
