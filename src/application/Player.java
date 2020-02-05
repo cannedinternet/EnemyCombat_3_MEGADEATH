@@ -2,7 +2,7 @@ package application;
 
 public class Player extends Entity{
     //private boolean powerUP;
-
+	private String name; //name chosen by the player
     //id player
     public Player(String spriteID, String name) {
         this.spriteID = spriteID;

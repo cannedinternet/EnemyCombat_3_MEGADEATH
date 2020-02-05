@@ -6,11 +6,28 @@ import javafx.scene.image.ImageView;
 import javafx.scene.shape.Shape;
 
 public class Entity extends Shape{
-    protected String spriteID, name; // object ID
-    protected int xPosition,yPosition,speed,health;
+    protected String spriteID; // image ID
+    protected int xPosition,yPosition,speed,health,entityID;
     protected Image img;
     protected ImageView display;
+    
+    public Entity(String spriteID, int entityID, int health) { //all entities need to be constructed with these
+    	this.spriteID = spriteID;
+    	this.entityID = entityID;
+    	this.health = health;
+    	
+    	this.img = generateSprite(spriteID);
+    	this.display = new ImageView(img);
+    }
 
+    public int getEntityID() {
+    	return entityID;
+    }
+    
+    public void setEntityID(int entityID) {
+    	this.entityID = entityID;
+    }
+    
     public int getHealth() {
     	return health;
     }
@@ -58,19 +75,15 @@ public class Entity extends Shape{
     public void setspriteID(String spriteID) {
         this.spriteID = spriteID;
     }
-
-    public String getName() {
-        return name;
-    }
-
-    public void setName(String name) {
-        this.name = name;
-    }
     
     public boolean intersects(Bounds b) {
     	return this.getBoundsInLocal().contains(b);
     }
 
+	public Image generateSprite(String file) {
+		return new Image(getClass().getResourceAsStream("/" + file + ".png"));
+	}
+    
 	@Override
 	public com.sun.javafx.geom.Shape impl_configShape() {
 		// TODO Auto-generated method stub

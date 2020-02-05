@@ -22,6 +22,4 @@ public class Map {
 	public void addWall(Wall wall, int xPos, int yPos) {
 		
 	}
-	
-	public Image crSp(String file) {return new Image(getClass().getResourceAsStream("/" + file + ".png"));}
 }
