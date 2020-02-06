@@ -6,6 +6,7 @@ import javafx.fxml.FXMLLoader;
 import javafx.scene.Group;
 import javafx.scene.Parent;
 import javafx.scene.control.Button;
+import javafx.scene.image.Image;
 import javafx.scene.layout.HBox;
 import javafx.stage.Stage;
 import javafx.scene.Scene;
@@ -75,6 +76,10 @@ public class Client extends Application {
         }
 
     }
+    
+    public Image createSprite(String spriteID) {
+    	return new Image(getClass().getResourceAsStream("/" + spriteID + ".png"));
+    	}
 
     public static void main(String[] args) {
         launch(args);

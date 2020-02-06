@@ -11,11 +11,10 @@ public class Entity extends Shape{
     protected Image img;
     protected ImageView display;
     
-    public Entity(String spriteID, int entityID, int health) { //all entities need to be constructed with these
+    public Entity(int entityID, String spriteID, int health, int xPosition, int yPositon) { //all entities need to be constructed with these
     	this.spriteID = spriteID;
-    	this.entityID = entityID;
     	this.health = health;
-    	
+    	    	
     	this.img = generateSprite(spriteID);
     	this.display = new ImageView(img);
     }
