@@ -1,11 +1,58 @@
 package application;
 
-public class Entity {
-    protected String sprintID, name; // object ID
-    protected int xPosition,yPosition,speed;
+import javafx.geometry.Bounds;
+import javafx.scene.image.Image;
+import javafx.scene.image.ImageView;
+import javafx.scene.shape.Shape;
 
-    public String getSprintID() {
-        return sprintID;
+public class Entity extends Shape{
+    protected String spriteID; // image ID
+    protected int xPosition,yPosition,speed,health,entityID;
+    protected Image img;
+    protected ImageView display;
+    
+    public Entity(int entityID, String spriteID, int health, int xPosition, int yPositon) { //all entities need to be constructed with these
+    	this.spriteID = spriteID;
+    	this.health = health;
+    	    	
+    	this.img = generateSprite(spriteID);
+    	this.display = new ImageView(img);
+    }
+
+    public int getEntityID() {
+    	return entityID;
+    }
+    
+    public void setEntityID(int entityID) {
+    	this.entityID = entityID;
+    }
+    
+    public int getHealth() {
+    	return health;
+    }
+    
+    public void setHealth(int health) {
+    	this.health = health;
+    }
+    
+    public Image getImg() {
+		return img;
+	}
+
+	public void setImg(Image img) {
+		this.img = img;
+	}
+
+	public ImageView getDisplay() {
+		return display;
+	}
+
+	public void setDisplay(ImageView display) {
+		this.display = display;
+	}
+
+	public String getspriteID() {
+        return spriteID;
     }
 
     public int getXPosition() {
@@ -24,15 +71,21 @@ public class Entity {
         this.yPosition = yPosition;
     }
 
-    public void setSprintID(String sprintID) {
-        this.sprintID = sprintID;
+    public void setspriteID(String spriteID) {
+        this.spriteID = spriteID;
+    }
+    
+    public boolean intersects(Bounds b) {
+    	return this.getBoundsInLocal().contains(b);
     }
 
-    public String getName() {
-        return name;
-    }
-
-    public void setName(String name) {
-        this.name = name;
-    }
+	public Image generateSprite(String file) {
+		return new Image(getClass().getResourceAsStream("/" + file + ".png"));
+	}
+    
+	@Override
+	public com.sun.javafx.geom.Shape impl_configShape() {
+		// TODO Auto-generated method stub
+		return null;
+	}
 }
