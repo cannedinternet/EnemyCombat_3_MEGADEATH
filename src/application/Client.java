@@ -3,11 +3,13 @@ package application;
 import javafx.application.Application;
 import javafx.application.Platform;
 import javafx.fxml.FXMLLoader;
+import javafx.geometry.Insets;
 import javafx.scene.Group;
 import javafx.scene.Parent;
 import javafx.scene.control.Button;
 import javafx.scene.image.Image;
 import javafx.scene.layout.HBox;
+import javafx.scene.layout.VBox;
 import javafx.stage.Stage;
 import javafx.scene.Scene;
 import javafx.scene.layout.BorderPane;
@@ -33,13 +35,14 @@ public class Client extends Application {
             //starting menu
 
             Button p1 = new Button("1 player");
-            Button p2 = new Button("3 players");
+            Button p2 = new Button("2 players");
             Button online = new Button("Online");
 
             p2.setOnAction(new EventHandler<ActionEvent>() {
                 @Override
                 public void handle(ActionEvent e) {
-                    server = new Server("Local Host", new Player(1, "Player 1"), new Player(2, "Player 2"));
+                    server = new Server("Local Host", new Player("1", "Player 1"),
+                            new Player("2", "Player 2"));
 
                 }
 
@@ -52,7 +55,7 @@ public class Client extends Application {
 //                }
 //            });
             p1.setOnAction((ActionEvent e) -> {
-                server = new Server("Local Host", new Player(1, "Player 1"), new Player(2, "Player 2"));
+                server = new Server("Local Host", new Player("1", "Player 1"), null);
 
 
             });
@@ -60,15 +63,24 @@ public class Client extends Application {
             online.setOnAction((ActionEvent e) -> {
 
             });
+            Button quit = new Button("quit");
+
+            quit.setOnAction((ActionEvent e)->{
+                primaryStage.close();
+
+            });
             HBox hList = new HBox();
-            hList.setSpacing(10);
+            VBox vBox = new VBox();
+            hList.setSpacing(325);
             hList.getChildren().addAll(p1, p2, online);
             Group root = new Group();
-            root.getChildren().add(hList);
+            vBox.getChildren().addAll(hList,quit);
+            vBox.setPadding(new Insets(100));
+            root.getChildren().add(vBox);
             Scene scene = new Scene(root, 400, 400);
             scene.getStylesheets().add(getClass().getResource("application.css").toExternalForm());
             primaryStage.setScene(scene);
-//            primaryStage.setFullScreen(true);
+            primaryStage.setFullScreen(true);
             primaryStage.show();
 
         } catch (Exception e) {
