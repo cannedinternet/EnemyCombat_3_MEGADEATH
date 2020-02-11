@@ -20,19 +20,19 @@ public class Server {
     private Player players1=null;
     private Player player2=null;
     
-    private int lastEntityID;
+    private static int lastEntityID;
 
     public Server(String ip, Player players1, Player player2) {
         this.ip = ip;
         this.players1 = players1;
         this.player2 = player2;
-        this.lastEntityID = 0;
+        lastEntityID = 0;
     }
 
 
     public Server(String ip) {
         this.ip = ip;
-        this.lastEntityID = 0;
+        lastEntityID = 0;
     }
 
     public void setPlayers1(Player players1) {
@@ -71,8 +71,8 @@ public class Server {
         return socket;
     }
     
-    public int generateEntityID() {
-    	this.lastEntityID++;
+    public static int generateEntityID() {
+    	lastEntityID++;
     	return lastEntityID;
     }
     
