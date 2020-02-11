@@ -1,5 +1,5 @@
 package application;
-
+import application.*;
 import javafx.application.Application;
 import javafx.application.Platform;
 import javafx.fxml.FXMLLoader;
@@ -18,6 +18,8 @@ import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
 
 import java.net.InetAddress;
+
+import static application.Server.generateEntityID;
 
 
 public class Client extends Application {
@@ -41,8 +43,8 @@ public class Client extends Application {
             p2.setOnAction(new EventHandler<ActionEvent>() {
                 @Override
                 public void handle(ActionEvent e) {
-                    server = new Server("Local Host", new Player("1", "Player 1"),
-                            new Player("2", "Player 2"));
+                    server = new Server("Local Host", new Player(generateEntityID(), "Player 1", "player 1"),
+                            new Player(generateEntityID(), "Player 2","player 2"));
 
                 }
 
@@ -55,7 +57,7 @@ public class Client extends Application {
 //                }
 //            });
             p1.setOnAction((ActionEvent e) -> {
-                server = new Server("Local Host", new Player("1", "Player 1"), null);
+                server = new Server("Local Host", new Player(generateEntityID(), "Player 1","player 1"), null);
 
 
             });
