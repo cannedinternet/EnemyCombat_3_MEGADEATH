@@ -1,9 +1,8 @@
 package application;
 import java.io.*;
 import java.net.*;
-
-import javafx.scene.canvas.Canvas;
 import javafx.scene.image.Image;
+import javafx.scene.layout.Pane;
 
 public class Server {
 	//Socket
@@ -15,7 +14,7 @@ public class Server {
 
     //Map
     private int w,h,blockSize;
-	private Canvas map;
+	private Pane map;
 
     private Player players1=null;
     private Player player2=null;
@@ -77,7 +76,7 @@ public class Server {
     }
     
     public void buildMap(String mapID) {
-    	this.map = new Canvas();
+    	this.map = new Pane();
 		Image mapImg = new Image(getClass().getResourceAsStream("/" + mapID + ".png"));
 		this.w = (int) mapImg.getWidth();
 		this.h = (int) mapImg.getHeight();
@@ -90,6 +89,6 @@ public class Server {
     }
     
     public void addEntity(Entity entity) {
-		//add entity to whatever list or logic is used
+		//find a way to do this
 	}
 }
