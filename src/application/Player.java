@@ -4,8 +4,8 @@ public class Player extends Entity{
     //private boolean powerUP;
 	private String name; //name chosen by the player
 	
-    public Player(int entityID, String spriteID, int health, String name, int xPosition, int yPosition) {
-		super(entityID, spriteID, health, xPosition, yPosition);
+    public Player(int entityID, String spriteID, String name ) {
+		super(entityID, spriteID, 100, 0, 0);
     	this.name = name;
     }
 
