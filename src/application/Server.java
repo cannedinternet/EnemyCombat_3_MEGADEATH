@@ -6,6 +6,7 @@ import javafx.scene.layout.Pane;
 import java.io.*;
 import java.net.ServerSocket;
 import java.net.Socket;
+import java.util.HashMap;
 
 public class Server {
     //Socket
@@ -16,8 +17,11 @@ public class Server {
     private ServerSocket serverSocket;
 
     //Map
-    private int w, h, blockSize;
+    private int w, h;
     private Pane map;
+    private final int blockSize = 60;
+    
+    private HashMap<Integer, Entity> entityMap = new HashMap<Integer, Entity>();
 
     private Player players1 = null;
     private Player player2 = null;
@@ -73,7 +77,7 @@ public class Server {
         return socket;
     }
 
-    public static int generateEntityID() {
+    public static Integer generateEntityID() {
         lastEntityID++;
         return lastEntityID;
     }
@@ -92,51 +96,68 @@ public class Server {
     }
 
     public void addEntity(Entity entity) {
-        //find a way to do this
+        this.map.getChildren().add(entity);
+        entity.setLayoutX(entity.getXPosition());
+        entity.setLayoutY(entity.getYPosition());
+        entityMap.put(entity.getEntityID(), entity);
+    } 
+    
+    public Image createSprite(String spriteID) {
+    	return new Image(getClass().getResourceAsStream("/" + spriteID + ".png"));
     }
+    
+    //GIMME ANIMATION TIMER
 
-    public static void serverStart() throws IOException {
+    public static void serverStart() {
+        try {
+            ServerSocket serverSocket = new ServerSocket(4444);
+            while (true) {
 
-        ServerSocket serverSocket = new ServerSocket(4444);
-        while (true) {
 
+                Socket socket = null;
+                try {
+                    socket = serverSocket.accept();
+                    DataInputStream in = new DataInputStream(socket.getInputStream());
+                    DataOutputStream out = new DataOutputStream(socket.getOutputStream());
 
-            Socket socket = null;
-            try {
-                socket = serverSocket.accept();
-                InputStream in = new DataInputStream(socket.getInputStream());
-                OutputStream out = new DataOutputStream(socket.getOutputStream());
+                    Thread serverThread = new ClientHandler(in, out, socket);
+                    serverThread.start();
 
-                Thread serverThread = new ClientHandler(in,out,socket);
-                serverThread.start();
-
-            } catch (IOException e) {
-                e.printStackTrace();
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
             }
+
+        } catch (IOException e) {
+            e.printStackTrace();
         }
-
-
     }
 }
-class ClientHandler extends Thread
-{
 
-    final InputStream in;
-    final OutputStream out;
+class ClientHandler extends Thread {
+
+    final DataInputStream in;
+    final DataOutputStream out;
     final Socket socket;
 
-    public ClientHandler(InputStream dis, OutputStream dos, Socket s) {
-        this.in  = dis;
+    public ClientHandler(DataInputStream dis, DataOutputStream dos, Socket s) {
+        this.in = dis;
         this.out = dos;
         this.socket = s;
     }
-    @Override
-    public void run()
-    {
-        while(true)
-        {
 
+    @Override
+    public void run() {
+        try {
+            out.writeUTF("you have conected to server");
         }
+        catch (IOException e)
+        {
+            e.printStackTrace();
+        }
+        //while (true) {
+
+        //}
     }
 
 }

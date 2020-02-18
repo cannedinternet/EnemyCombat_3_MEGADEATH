@@ -7,7 +7,8 @@ import javafx.scene.shape.Shape;
 
 public class Entity extends Shape{
     protected String spriteID; // image ID
-    protected int xPosition,yPosition,speed,health,entityID;
+    protected int xPosition,yPosition,speed,health;
+    protected Integer entityID;
     protected Image img;
     protected ImageView display;
     
@@ -19,11 +20,11 @@ public class Entity extends Shape{
     	this.display = new ImageView(img);
     }
 
-    public int getEntityID() {
+    public Integer getEntityID() {
     	return entityID;
     }
     
-    public void setEntityID(int entityID) {
+    public void setEntityID(Integer entityID) {
     	this.entityID = entityID;
     }
     
@@ -60,6 +61,7 @@ public class Entity extends Shape{
     }
 
     public void setXPosition(int xPosition) {
+    	this.setLayoutX(xPosition);
         this.xPosition = xPosition;
     }
 
@@ -68,6 +70,7 @@ public class Entity extends Shape{
     }
 
     public void setYPosition(int yPosition) {
+    	this.setLayoutY(yPosition);
         this.yPosition = yPosition;
     }
 
