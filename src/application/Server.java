@@ -6,6 +6,7 @@ import javafx.scene.layout.Pane;
 import java.io.*;
 import java.net.ServerSocket;
 import java.net.Socket;
+import java.util.HashMap;
 
 public class Server {
     //Socket
@@ -16,8 +17,11 @@ public class Server {
     private ServerSocket serverSocket;
 
     //Map
-    private int w, h, blockSize;
+    private int w, h;
     private Pane map;
+    private final int blockSize = 60;
+    
+    private HashMap<Integer, Entity> entityMap = new HashMap<Integer, Entity>();
 
     private Player players1 = null;
     private Player player2 = null;
@@ -73,7 +77,7 @@ public class Server {
         return socket;
     }
 
-    public static int generateEntityID() {
+    public static Integer generateEntityID() {
         lastEntityID++;
         return lastEntityID;
     }
@@ -92,7 +96,14 @@ public class Server {
     }
 
     public void addEntity(Entity entity) {
-        //find a way to do this
+        this.map.getChildren().add(entity);
+        entity.setLayoutX(entity.getXPosition());
+        entity.setLayoutY(entity.getYPosition());
+        entityMap.put(entity.getEntityID(), entity);
+    } 
+    
+    public Image createSprite(String spriteID) {
+    	return new Image(getClass().getResourceAsStream("/" + spriteID + ".png"));
     }
 
     public static void serverStart() throws IOException {
@@ -114,8 +125,6 @@ public class Server {
                 e.printStackTrace();
             }
         }
-
-
     }
 }
 class ClientHandler extends Thread

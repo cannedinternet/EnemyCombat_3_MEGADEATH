@@ -61,9 +61,20 @@ public class Client extends Application {
             });
 
             online.setOnAction((ActionEvent e) -> {
+;
+                try {
+                Server.serverStart();
+                }
+                catch(Exception i)
+                {
+                	i.printStackTrace();
+                }
                 lookForServer(0);
             });
-            Button quit = new Button("quit");
+
+           
+           Button quit = new Button("quit");
+            }
 
             quit.setOnAction((ActionEvent e)->{
                 primaryStage.close();
@@ -80,18 +91,16 @@ public class Client extends Application {
             Scene scene = new Scene(root, 400, 400);
             scene.getStylesheets().add(getClass().getResource("application.css").toExternalForm());
             primaryStage.setScene(scene);
-            primaryStage.setFullScreen(true);
+            //primaryStage.setFullScreen(true);
+            primaryStage.setFullScreen(false);
             primaryStage.show();
+            
 
         } catch (Exception e) {
             e.printStackTrace();
         }
 
     }
-    
-    public Image createSprite(String spriteID) {
-    	return new Image(getClass().getResourceAsStream("/" + spriteID + ".png"));
-    	}
 
     public static void main(String[] args) {
         launch(args);
@@ -108,7 +117,7 @@ public class Client extends Application {
                 i++;
                 lookForServer(i);
             }
-
+            else e.printStackTrace();
 
         }
 
