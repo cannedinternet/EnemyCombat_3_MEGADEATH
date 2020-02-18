@@ -1,19 +1,19 @@
 package application;
+
 import javafx.application.Application;
+import javafx.event.ActionEvent;
+import javafx.event.EventHandler;
 import javafx.geometry.Insets;
 import javafx.scene.Group;
+import javafx.scene.Scene;
 import javafx.scene.control.Button;
 import javafx.scene.image.Image;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
 import javafx.stage.Stage;
-import javafx.scene.Scene;
-import javafx.scene.layout.Pane;
-
-import javafx.event.ActionEvent;
-import javafx.event.EventHandler;
 
 import java.net.InetAddress;
+import java.net.Socket;
 
 import static application.Server.generateEntityID;
 
@@ -21,6 +21,7 @@ import static application.Server.generateEntityID;
 public class Client extends Application {
     private Server server;
     private InetAddress ipAddress;
+    private Socket socket;
 
     @Override
     public void start(Stage primaryStage) {
@@ -29,7 +30,8 @@ public class Client extends Application {
             String ip =ipAddress.getHostAddress().trim();
             System.out.println(ip);
             System.out.println(ipAddress.getHostName());
-
+            socket = null;
+            server = null;
             //starting menu
 
             Button p1 = new Button("1 player");
@@ -59,7 +61,7 @@ public class Client extends Application {
             });
 
             online.setOnAction((ActionEvent e) -> {
-
+                lookForServer(0);
             });
             Button quit = new Button("quit");
 
@@ -93,5 +95,22 @@ public class Client extends Application {
 
     public static void main(String[] args) {
         launch(args);
+    }
+
+    public void lookForServer(int i)
+    {
+        try {
+            socket = new Socket(ipAddress, 4444);
+        }
+        catch (Exception e)
+        {
+            if(i<30) {
+                i++;
+                lookForServer(i);
+            }
+
+
+        }
+
     }
 }
