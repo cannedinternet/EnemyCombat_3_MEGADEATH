@@ -12,6 +12,9 @@ import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
 import javafx.stage.Stage;
 
+import java.io.DataInputStream;
+import java.io.DataOutputStream;
+import java.io.IOException;
 import java.net.InetAddress;
 import java.net.Socket;
 
@@ -19,15 +22,15 @@ import static application.Server.generateEntityID;
 
 
 public class Client extends Application {
-    private Server server;
-    private InetAddress ipAddress;
-    private Socket socket;
+    private static Server server;
+    private static InetAddress ipAddress;
+    private static Socket socket;
 
     @Override
     public void start(Stage primaryStage) {
         try {
             ipAddress = InetAddress.getLocalHost();
-            String ip =ipAddress.getHostAddress().trim();
+            String ip = ipAddress.getHostAddress().trim();
             System.out.println(ip);
             System.out.println(ipAddress.getHostName());
             socket = null;
@@ -61,20 +64,9 @@ public class Client extends Application {
             });
 
             online.setOnAction((ActionEvent e) -> {
-;
-                try {
-                Server.serverStart();
-                }
-                catch(Exception i)
-                {
-                	i.printStackTrace();
-                }
-                lookForServer(0);
+            setServer();
             });
-
-           
-           Button quit = new Button("quit");
-            }
+            Button quit = new Button("quit");
 
             quit.setOnAction((ActionEvent e)->{
                 primaryStage.close();
@@ -82,7 +74,7 @@ public class Client extends Application {
             });
             HBox hList = new HBox();
             VBox vBox = new VBox();
-            hList.setSpacing(325);
+            //hList.setSpacing(325);
             hList.getChildren().addAll(p1, p2, online);
             Group root = new Group();
             vBox.getChildren().addAll(hList,quit);
@@ -92,9 +84,7 @@ public class Client extends Application {
             scene.getStylesheets().add(getClass().getResource("application.css").toExternalForm());
             primaryStage.setScene(scene);
             //primaryStage.setFullScreen(true);
-            primaryStage.setFullScreen(false);
             primaryStage.show();
-            
 
         } catch (Exception e) {
             e.printStackTrace();
@@ -102,24 +92,40 @@ public class Client extends Application {
 
     }
 
+    public Image createSprite(String spriteID) {
+        return new Image(getClass().getResourceAsStream("/" + spriteID + ".png"));
+    }
+
     public static void main(String[] args) {
         launch(args);
     }
 
-    public void lookForServer(int i)
+    public static void lookForServer(int i)
     {
         try {
             socket = new Socket(ipAddress, 4444);
+            DataInputStream in = new DataInputStream(socket.getInputStream());
+            DataOutputStream out = new DataOutputStream(socket.getOutputStream());
+            System.out.println(in.readUTF());
         }
-        catch (Exception e)
+        catch (IOException e)
         {
             if(i<30) {
                 i++;
+                System.out.println("try "+ i);
                 lookForServer(i);
-            }
-            else e.printStackTrace();
 
+            }
+            else
+                e.printStackTrace();
         }
 
+
+    }
+
+    public static void setServer()
+    {
+        Server.serverStart();
+        lookForServer(0);
     }
 }

@@ -105,47 +105,59 @@ public class Server {
     public Image createSprite(String spriteID) {
     	return new Image(getClass().getResourceAsStream("/" + spriteID + ".png"));
     }
+    
+    //GIMME ANIMATION TIMER
 
-    public static void serverStart() throws IOException {
+    public static void serverStart() {
+        try {
+            ServerSocket serverSocket = new ServerSocket(4444);
+            while (true) {
 
-        ServerSocket serverSocket = new ServerSocket(4444);
-        while (true) {
 
+                Socket socket = null;
+                try {
+                    socket = serverSocket.accept();
+                    DataInputStream in = new DataInputStream(socket.getInputStream());
+                    DataOutputStream out = new DataOutputStream(socket.getOutputStream());
 
-            Socket socket = null;
-            try {
-                socket = serverSocket.accept();
-                InputStream in = new DataInputStream(socket.getInputStream());
-                OutputStream out = new DataOutputStream(socket.getOutputStream());
+                    Thread serverThread = new ClientHandler(in, out, socket);
+                    serverThread.start();
 
-                Thread serverThread = new ClientHandler(in,out,socket);
-                serverThread.start();
-
-            } catch (IOException e) {
-                e.printStackTrace();
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
             }
+
+        } catch (IOException e) {
+            e.printStackTrace();
         }
     }
 }
-class ClientHandler extends Thread
-{
 
-    final InputStream in;
-    final OutputStream out;
+class ClientHandler extends Thread {
+
+    final DataInputStream in;
+    final DataOutputStream out;
     final Socket socket;
 
-    public ClientHandler(InputStream dis, OutputStream dos, Socket s) {
-        this.in  = dis;
+    public ClientHandler(DataInputStream dis, DataOutputStream dos, Socket s) {
+        this.in = dis;
         this.out = dos;
         this.socket = s;
     }
-    @Override
-    public void run()
-    {
-        while(true)
-        {
 
+    @Override
+    public void run() {
+        try {
+            out.writeUTF("you have conected to server");
         }
+        catch (IOException e)
+        {
+            e.printStackTrace();
+        }
+        //while (true) {
+
+        //}
     }
 
 }
