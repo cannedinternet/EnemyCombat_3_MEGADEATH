@@ -1,11 +1,14 @@
 package application;
-import java.io.*;
-import java.net.*;
+
 import javafx.scene.image.Image;
 import javafx.scene.layout.Pane;
 
+import java.io.*;
+import java.net.ServerSocket;
+import java.net.Socket;
+
 public class Server {
-	//Socket
+    //Socket
     private String ip;
     private InputStream in;
     private OutputStream out;
@@ -13,12 +16,12 @@ public class Server {
     private ServerSocket serverSocket;
 
     //Map
-    private int w,h,blockSize;
-	private Pane map;
+    private int w, h, blockSize;
+    private Pane map;
 
-    private Player players1=null;
-    private Player player2=null;
-    
+    private Player players1 = null;
+    private Player player2 = null;
+
     private static int lastEntityID;
 
     public Server(String ip, Player players1, Player player2) {
@@ -69,26 +72,71 @@ public class Server {
     public Socket getSocket() {
         return socket;
     }
-    
+
     public static int generateEntityID() {
-    	lastEntityID++;
-    	return lastEntityID;
+        lastEntityID++;
+        return lastEntityID;
     }
-    
+
     public void buildMap(String mapID) {
-    	this.map = new Pane();
-		Image mapImg = new Image(getClass().getResourceAsStream("/" + mapID + ".png"));
-		this.w = (int) mapImg.getWidth();
-		this.h = (int) mapImg.getHeight();
-		for(int i = 0; i < h; i++)
-			for(int j = 0; j < w; j++) {
-				Integer pixel = mapImg.getPixelReader().getArgb(j, i);
-				if(pixel != 0)
-					addEntity(new Wall(generateEntityID(), Integer.toString(pixel), -1000, j*blockSize, i*blockSize));
-			}
+        this.map = new Pane();
+        Image mapImg = new Image(getClass().getResourceAsStream("/" + mapID + ".png"));
+        this.w = (int) mapImg.getWidth();
+        this.h = (int) mapImg.getHeight();
+        for (int i = 0; i < h; i++)
+            for (int j = 0; j < w; j++) {
+                Integer pixel = mapImg.getPixelReader().getArgb(j, i);
+                if (pixel != 0)
+                    addEntity(new Wall(generateEntityID(), Integer.toString(pixel), -1000, j * blockSize, i * blockSize));
+            }
     }
-    
+
     public void addEntity(Entity entity) {
-		//find a way to do this
-	}
+        //find a way to do this
+    }
+
+    public static void serverStart() throws IOException {
+
+        ServerSocket serverSocket = new ServerSocket(4444);
+        while (true) {
+
+
+            Socket socket = null;
+            try {
+                socket = serverSocket.accept();
+                InputStream in = new DataInputStream(socket.getInputStream());
+                OutputStream out = new DataOutputStream(socket.getOutputStream());
+
+                Thread serverThread = new ClientHandler(in,out,socket);
+                serverThread.start();
+
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+        }
+
+
+    }
+}
+class ClientHandler extends Thread
+{
+
+    final InputStream in;
+    final OutputStream out;
+    final Socket socket;
+
+    public ClientHandler(InputStream dis, OutputStream dos, Socket s) {
+        this.in  = dis;
+        this.out = dos;
+        this.socket = s;
+    }
+    @Override
+    public void run()
+    {
+        while(true)
+        {
+
+        }
+    }
+
 }
