@@ -10,6 +10,7 @@ import javafx.scene.control.Button;
 import javafx.scene.image.Image;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
+import javafx.scene.text.Text;
 import javafx.stage.Stage;
 
 import java.io.DataInputStream;
@@ -25,6 +26,8 @@ public class Client extends Application {
     private static Server server;
     private static InetAddress ipAddress;
     private static Socket socket;
+    private static DataOutputStream out;
+    private static DataInputStream in;
 
     @Override
     public void start(Stage primaryStage) {
@@ -44,8 +47,8 @@ public class Client extends Application {
             p2.setOnAction(new EventHandler<ActionEvent>() {
                 @Override
                 public void handle(ActionEvent e) {
-                    server = new Server("Local Host", new Player(generateEntityID(), "Player 1", "player 1"),
-                            new Player(generateEntityID(), "Player 2","player 2"));
+                    //server = new Server("Local Host", new Player(generateEntityID(), "Player 1", "player 1"),
+                    // new Player(generateEntityID(), "Player 2","player 2"));
 
                 }
 
@@ -58,17 +61,26 @@ public class Client extends Application {
 //                }
 //            });
             p1.setOnAction((ActionEvent e) -> {
-                server = new Server("Local Host", new Player(generateEntityID(), "Player 1","player 1"), null);
+                //server = new Server("Local Host", new Player(generateEntityID(), "Player 1","player 1"), null);
 
 
             });
 
             online.setOnAction((ActionEvent e) -> {
-            setServer();
+//            setServer();
+                socket = lookForServer();
+                if (socket == null) {
+                    // TODO: let user know
+                    Text text = new Text("You failed to connect");
+                    Group group = new Group(text);
+                    Scene scene = new Scene(group);
+                    primaryStage.setScene(scene);
+                    primaryStage.show();
+                } else online(primaryStage);
             });
             Button quit = new Button("quit");
 
-            quit.setOnAction((ActionEvent e)->{
+            quit.setOnAction((ActionEvent e) -> {
                 primaryStage.close();
 
             });
@@ -77,7 +89,7 @@ public class Client extends Application {
             //hList.setSpacing(325);
             hList.getChildren().addAll(p1, p2, online);
             Group root = new Group();
-            vBox.getChildren().addAll(hList,quit);
+            vBox.getChildren().addAll(hList, quit);
             vBox.setPadding(new Insets(100));
             root.getChildren().add(vBox);
             Scene scene = new Scene(root, 400, 400);
@@ -100,32 +112,71 @@ public class Client extends Application {
         launch(args);
     }
 
-    public static void lookForServer(int i)
-    {
-        try {
-            socket = new Socket(ipAddress, 4444);
-            DataInputStream in = new DataInputStream(socket.getInputStream());
-            DataOutputStream out = new DataOutputStream(socket.getOutputStream());
-            System.out.println(in.readUTF());
-        }
-        catch (IOException e)
-        {
-            if(i<30) {
-                i++;
-                System.out.println("try "+ i);
-                lookForServer(i);
-
+    public static Socket lookForServer() {
+        for (int j = 0; j < 30; j++) {
+            try {
+                final Socket socket = new Socket(ipAddress, 4444);
+                in = new DataInputStream(socket.getInputStream());
+                out = new DataOutputStream(socket.getOutputStream());
+                System.out.println(in.readUTF());
+                return socket;
+            } catch (Exception e) {
+                //e.printStackTrace();
             }
-            else
-                e.printStackTrace();
+            try {
+                Thread.sleep(1000);
+            } catch (InterruptedException e) {
+            }
         }
-
-
+        return null;
     }
 
-    public static void setServer()
-    {
-        Server.serverStart();
-        lookForServer(0);
+    public void online(Stage stage) {
+        Text text = null;
+//        Text playersConnected = null;
+        VBox vBox = null;
+
+        try {
+            String con = in.readUTF();
+            text = new Text(con);
+        } catch (Exception e) {
+            text = new Text("connection failed");
+        }
+        Button quit = new Button("quit");
+        Button ready = new Button("Ready");
+//            try {
+//                playersConnected = new Text(in.readUTF());
+//            } catch (IOException e) {
+//
+//            }
+
+
+
+        vBox = new VBox();
+        vBox.getChildren().addAll(text, quit, ready/*, playersConnected*/);
+//        vBox.setSpacing(10);
+        Group root = new Group(vBox);
+
+        Scene scene = new Scene(root, 400, 400);
+
+        quit.setOnAction((ActionEvent e) -> {
+            start(stage);
+
+        });
+        ready.setOnAction( (ActionEvent e) -> {
+
+            try {
+                out.writeInt(1);
+                System.out.println(in.readUTF());
+
+            } catch (IOException ex) {
+                ex.printStackTrace();
+            }
+        });
+
+        stage.setScene(scene);
+        stage.show();
+
+
     }
 }
