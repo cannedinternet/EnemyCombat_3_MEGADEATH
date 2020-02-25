@@ -163,7 +163,7 @@ public class Client extends Application {
             start(stage);
 
         });
-        ready.setOnAction((ActionEvent e) -> {
+        ready.setOnAction( (ActionEvent e) -> {
 
             try {
                 out.writeInt(1);

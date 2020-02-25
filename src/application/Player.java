@@ -10,7 +10,7 @@ public class Player extends Entity{
     	this.ip = ip;
     }
 
-	public String getName() {
+	public String getName( ) {
 		return name;
 	}
 

@@ -116,7 +116,7 @@ public class Server {
             System.out.println("Starting server on " + serverSocket.getLocalSocketAddress());
             Socket socket = null;
 //            int playersReady = 0;
-            while (true) {
+            while (  true) {
                 try {
                     socket = serverSocket.accept();
                     DataInputStream in = new DataInputStream(socket.getInputStream());
