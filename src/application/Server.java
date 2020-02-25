@@ -4,6 +4,8 @@ import javafx.scene.image.Image;
 import javafx.scene.layout.Pane;
 
 import java.io.*;
+import java.net.Inet4Address;
+import java.net.InetAddress;
 import java.net.ServerSocket;
 import java.net.Socket;
 import java.util.HashMap;
@@ -11,8 +13,6 @@ import java.util.HashMap;
 public class Server {
     //Socket
     private String ip;
-    private InputStream in;
-    private OutputStream out;
     private Socket socket;
     private ServerSocket serverSocket;
 
@@ -20,9 +20,9 @@ public class Server {
     private int w, h;
     private Pane map;
     private final int blockSize = 60;
-    
-    private HashMap<Integer, Entity> entityMap = new HashMap<Integer, Entity>();
 
+    private HashMap<Integer, Entity> entityMap = new HashMap<Integer, Entity>();
+    //player
     private Player players1 = null;
     private Player player2 = null;
 
@@ -100,64 +100,63 @@ public class Server {
         entity.setLayoutX(entity.getXPosition());
         entity.setLayoutY(entity.getYPosition());
         entityMap.put(entity.getEntityID(), entity);
-    } 
-    
-    public Image createSprite(String spriteID) {
-    	return new Image(getClass().getResourceAsStream("/" + spriteID + ".png"));
     }
-    
+
+    public Image createSprite(String spriteID) {
+        return new Image(getClass().getResourceAsStream("/" + spriteID + ".png"));
+    }
+
     //GIMME ANIMATION TIMER
 
     public static void serverStart() {
+        ServerSocket serverSocket = null;
         try {
-            ServerSocket serverSocket = new ServerSocket(4444);
+            serverSocket = new ServerSocket(4444, 5, InetAddress.getByAddress(new byte[4]));
+            //noinspection InfiniteLoopStatement
+            System.out.println("Starting server on " + serverSocket.getLocalSocketAddress());
+            Socket socket = null;
+//            int playersReady = 0;
             while (true) {
-
-
-                Socket socket = null;
                 try {
                     socket = serverSocket.accept();
                     DataInputStream in = new DataInputStream(socket.getInputStream());
                     DataOutputStream out = new DataOutputStream(socket.getOutputStream());
+                    String name = "client-" + socket.getRemoteSocketAddress().toString();
+                    System.out.println(name);
+                    Thread clientThread = new Thread(new ClientHandler(in, out, socket), name);
+                    clientThread.start();
+//                    if(in.readInt() == 1)
+//                    {
+//                        playersReady++;
+//                        System.out.println(playersReady);
+//                    }
 
-                    Thread serverThread = new ClientHandler(in, out, socket);
-                    serverThread.start();
 
-                } catch (IOException e) {
+                } catch (Exception e) {
                     e.printStackTrace();
                 }
             }
 
         } catch (IOException e) {
             e.printStackTrace();
+        } finally {
+            closeQuietly(serverSocket);
         }
-    }
-}
 
-class ClientHandler extends Thread {
-
-    final DataInputStream in;
-    final DataOutputStream out;
-    final Socket socket;
-
-    public ClientHandler(DataInputStream dis, DataOutputStream dos, Socket s) {
-        this.in = dis;
-        this.out = dos;
-        this.socket = s;
     }
 
-    @Override
-    public void run() {
+
+    static void closeQuietly(Closeable c) {
         try {
-            out.writeUTF("you have conected to server");
+            if (c != null) {
+                c.close();
+            }
+        } catch (IOException ignored) {
         }
-        catch (IOException e)
-        {
-            e.printStackTrace();
-        }
-        //while (true) {
-
-        //}
     }
 
+    public static void main(String[] args) {
+        serverStart();
+    }
 }
+
