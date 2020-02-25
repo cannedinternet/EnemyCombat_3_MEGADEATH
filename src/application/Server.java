@@ -1,182 +1,162 @@
 package application;
 
-import javafx.application.Application;
-import javafx.event.ActionEvent;
-import javafx.event.EventHandler;
-import javafx.geometry.Insets;
-import javafx.scene.Group;
-import javafx.scene.Scene;
-import javafx.scene.control.Button;
 import javafx.scene.image.Image;
-import javafx.scene.layout.HBox;
-import javafx.scene.layout.VBox;
-import javafx.scene.text.Text;
-import javafx.stage.Stage;
+import javafx.scene.layout.Pane;
 
-import java.io.DataInputStream;
-import java.io.DataOutputStream;
-import java.io.IOException;
+import java.io.*;
+import java.net.Inet4Address;
 import java.net.InetAddress;
+import java.net.ServerSocket;
 import java.net.Socket;
+import java.util.HashMap;
 
-import static application.Server.generateEntityID;
+public class Server {
+    //Socket
+    private String ip;
+    private Socket socket;
+    private ServerSocket serverSocket;
 
+    //Map
+    private int w, h;
+    private Pane map;
+    private final int blockSize = 60;
 
-public class Client extends Application {
-    private static Server server;
-    private static InetAddress ipAddress;
-    private static Socket socket;
-    private static DataOutputStream out;
-    private static DataInputStream in;
+    private HashMap<Integer, Entity> entityMap = new HashMap<Integer, Entity>();
+    //player
+    private Player players1 = null;
+    private Player player2 = null;
 
-    @Override
-    public void start(Stage primaryStage) {
-        try {
-            ipAddress = InetAddress.getLocalHost();
-            String ip = ipAddress.getHostAddress().trim();
-            System.out.println(ip);
-            System.out.println(ipAddress.getHostName());
-            socket = null;
-            server = null;
-            //starting menu
+    private static int lastEntityID;
 
-            Button p1 = new Button("1 player");
-            Button p2 = new Button("2 players");
-            Button online = new Button("Online");
-
-            p2.setOnAction(new EventHandler<ActionEvent>() {
-                @Override
-                public void handle(ActionEvent e) {
-                    //server = new Server("Local Host", new Player(generateEntityID(), "Player 1", "player 1"),
-                    // new Player(generateEntityID(), "Player 2","player 2"));
-
-                }
-
-            });
-//            p1.setOnAction(new EventHandler<ActionEvent>() {
-//                @Override
-//                public void handle(ActionEvent event) {
-//
-//                    player player1 = new player(1, "player 1");
-//                }
-//            });
-            p1.setOnAction((ActionEvent e) -> {
-                //server = new Server("Local Host", new Player(generateEntityID(), "Player 1","player 1"), null);
+    public Server(String ip, Player players1, Player player2) {
+        this.ip = ip;
+        this.players1 = players1;
+        this.player2 = player2;
+        lastEntityID = 0;
+    }
 
 
-            });
+    public Server(String ip) {
+        this.ip = ip;
+        lastEntityID = 0;
+    }
 
-            online.setOnAction((ActionEvent e) -> {
-//            setServer();
-                socket = lookForServer();
-                if (socket == null) {
-                    // TODO: let user know
-                    Text text = new Text("You failed to connect");
-                    Group group = new Group(text);
-                    Scene scene = new Scene(group);
-                    primaryStage.setScene(scene);
-                    primaryStage.show();
-                } else online(primaryStage);
-            });
-            Button quit = new Button("quit");
+    public void setPlayers1(Player players1) {
+        this.players1 = players1;
+    }
 
-            quit.setOnAction((ActionEvent e) -> {
-                primaryStage.close();
+    public void setPlayer2(Player player2) {
+        this.player2 = player2;
+    }
 
-            });
-            HBox hList = new HBox();
-            VBox vBox = new VBox();
-            //hList.setSpacing(325);
-            hList.getChildren().addAll(p1, p2, online);
-            Group root = new Group();
-            vBox.getChildren().addAll(hList, quit);
-            vBox.setPadding(new Insets(100));
-            root.getChildren().add(vBox);
-            Scene scene = new Scene(root, 400, 400);
-            scene.getStylesheets().add(getClass().getResource("application.css").toExternalForm());
-            primaryStage.setScene(scene);
-            //primaryStage.setFullScreen(true);
-            primaryStage.show();
+    public void setIp(String ip) {
+        this.ip = ip;
+    }
 
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
+    public void setSocket(Socket socket) {
+        this.socket = socket;
+    }
 
+    public void setServerSocket(ServerSocket serverSocket) {
+        this.serverSocket = serverSocket;
+    }
+
+    public String getIp() {
+        return ip;
+    }
+
+    public Player getPlayers1() {
+        return players1;
+    }
+
+    public Player getPlayer2() {
+        return player2;
+    }
+
+    public Socket getSocket() {
+        return socket;
+    }
+
+    public static Integer generateEntityID() {
+        lastEntityID++;
+        return lastEntityID;
+    }
+
+    public void buildMap(String mapID) {
+        this.map = new Pane();
+        Image mapImg = new Image(getClass().getResourceAsStream("/" + mapID + ".png"));
+        this.w = (int) mapImg.getWidth();
+        this.h = (int) mapImg.getHeight();
+        for (int i = 0; i < h; i++)
+            for (int j = 0; j < w; j++) {
+                Integer pixel = mapImg.getPixelReader().getArgb(j, i);
+                if (pixel != 0)
+                    addEntity(new Wall(generateEntityID(), Integer.toString(pixel), -1000, j * blockSize, i * blockSize));
+            }
+    }
+
+    public void addEntity(Entity entity) {
+        this.map.getChildren().add(entity);
+        entity.setLayoutX(entity.getXPosition());
+        entity.setLayoutY(entity.getYPosition());
+        entityMap.put(entity.getEntityID(), entity);
     }
 
     public Image createSprite(String spriteID) {
         return new Image(getClass().getResourceAsStream("/" + spriteID + ".png"));
     }
 
-    public static void main(String[] args) {
-        launch(args);
-    }
+    //GIMME ANIMATION TIMER
 
-    public static Socket lookForServer() {
-        for (int j = 0; j < 30; j++) {
-            try {
-                final Socket socket = new Socket(ipAddress, 4444);
-                in = new DataInputStream(socket.getInputStream());
-                out = new DataOutputStream(socket.getOutputStream());
-                System.out.println(in.readUTF());
-                return socket;
-            } catch (Exception e) {
-                //e.printStackTrace();
-            }
-            try {
-                Thread.sleep(1000);
-            } catch (InterruptedException e) {
-            }
-        }
-        return null;
-    }
-
-    public void online(Stage stage) {
-        Text text = null;
-//        Text playersConnected = null;
-        VBox vBox = null;
-
+    public static void serverStart() {
+        ServerSocket serverSocket = null;
         try {
-            String con = in.readUTF();
-            text = new Text(con);
-        } catch (Exception e) {
-            text = new Text("connection failed");
-        }
-        Button quit = new Button("quit");
-        Button ready = new Button("Ready");
-//            try {
-//                playersConnected = new Text(in.readUTF());
-//            } catch (IOException e) {
-//
-//            }
+            serverSocket = new ServerSocket(4444, 5, InetAddress.getByAddress(new byte[4]));
+            //noinspection InfiniteLoopStatement
+            System.out.println("Starting server on " + serverSocket.getLocalSocketAddress());
+            Socket socket = null;
+//            int playersReady = 0;
+            while (  true) {
+                try {
+                    socket = serverSocket.accept();
+                    DataInputStream in = new DataInputStream(socket.getInputStream());
+                    DataOutputStream out = new DataOutputStream(socket.getOutputStream());
+                    String name = "client-" + socket.getRemoteSocketAddress().toString();
+                    System.out.println(name);
+                    Thread clientThread = new Thread(new ClientHandler(in, out, socket), name);
+                    clientThread.start();
+//                    if(in.readInt() == 1)
+//                    {
+//                        playersReady++;
+//                        System.out.println(playersReady);
+//                    }
 
 
-
-        vBox = new VBox();
-        vBox.getChildren().addAll(text, quit, ready/*, playersConnected*/);
-//        vBox.setSpacing(10);
-        Group root = new Group(vBox);
-
-        Scene scene = new Scene(root, 400, 400);
-
-        quit.setOnAction((ActionEvent e) -> {
-            start(stage);
-
-        });
-        ready.setOnAction( (ActionEvent e) -> {
-
-            try {
-                out.writeInt(1);
-                System.out.println(in.readUTF());
-
-            } catch (IOException ex) {
-                ex.printStackTrace();
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
             }
-        });
 
-        stage.setScene(scene);
-        stage.show();
+        } catch (IOException e) {
+            e.printStackTrace();
+        } finally {
+            closeQuietly(serverSocket);
+        }
+
+    }
 
 
+    static void closeQuietly(Closeable c) {
+        try {
+            if (c != null) {
+                c.close();
+            }
+        } catch (IOException ignored) {
+        }
+    }
+
+    public static void main(String[] args) {
+        serverStart();
     }
 }
+
