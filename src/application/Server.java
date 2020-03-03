@@ -108,10 +108,10 @@ public class Server {
 
     //GIMME ANIMATION TIMER
 
-    public static void serverStart() {
+    public static void serverStart()  {
         ServerSocket serverSocket = null;
         try {
-            serverSocket = new ServerSocket(4444, 5, InetAddress.getByAddress(new byte[4]));
+            serverSocket = new ServerSocket(80, 5, InetAddress.getByAddress(new byte[4]));
             //noinspection InfiniteLoopStatement
             System.out.println("Starting server on " + serverSocket.getLocalSocketAddress());
             Socket socket = null;
@@ -123,8 +123,11 @@ public class Server {
                     DataOutputStream out = new DataOutputStream(socket.getOutputStream());
                     String name = "client-" + socket.getRemoteSocketAddress().toString();
                     System.out.println(name);
-                    Thread clientThread = new Thread(new ClientHandler(in, out, socket), name);
-                    clientThread.start();
+                    Thread joinningThread = new Thread(new ClientHandler(in, out, socket), name);
+                    Thread readyThread = new Thread((new ready(in, out, socket)), "readyThread");
+                    joinningThread.start();
+                    readyThread.start();
+
 //                    if(in.readInt() == 1)
 //                    {
 //                        playersReady++;
