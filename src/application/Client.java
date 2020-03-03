@@ -67,16 +67,28 @@ public class Client extends Application {
             });
 
             online.setOnAction((ActionEvent e) -> {
+                settingOnline(primaryStage);
 //            setServer();
-                socket = lookForServer();
-                if (socket == null) {
-                    // TODO: let user know
-                    Text text = new Text("You failed to connect");
-                    Group group = new Group(text);
-                    Scene scene = new Scene(group);
-                    primaryStage.setScene(scene);
-                    primaryStage.show();
-                } else online(primaryStage);
+//                socket = lookForServer();
+//                if (socket == null) {
+//                    //TODO: let user know
+//
+//                    Button back =  new Button("Back");
+//                    Button again = new Button("Try again");
+//                    back.setOnAction((ActionEvent e)->{
+//                        start(primaryStage);
+//                    });
+//                    again.setOnAction((ActionEvent e)->
+//                    {
+//
+//                    });
+//                    Text text = new Text("You failed to connect");
+//                    Group group = new Group(text);
+//                    Scene scene = new Scene(group,400,400);
+//                    primaryStage.setScene(scene);
+//                    primaryStage.show()
+//                    ;
+//                } else online(primaryStage);
             });
             Button quit = new Button("quit");
 
@@ -113,9 +125,9 @@ public class Client extends Application {
     }
 
     public static Socket lookForServer() {
-        for (int j = 0; j < 30; j++) {
+        for (int j = 0; j < 5; j++) { //TODO: change the counter to a resonable amoount.
             try {
-                final Socket socket = new Socket(ipAddress, 4444);
+                final Socket socket = new Socket(ipAddress, 80);
                 in = new DataInputStream(socket.getInputStream());
                 out = new DataOutputStream(socket.getOutputStream());
                 System.out.println(in.readUTF());
@@ -131,51 +143,114 @@ public class Client extends Application {
         return null;
     }
 
-    public void online(Stage stage) {
-        Text text = null;
-//        Text playersConnected = null;
-        VBox vBox = null;
+    public boolean isReady = false;
 
+    public void online(Stage stage) {
         try {
-            String con = in.readUTF();
-            text = new Text(con);
-        } catch (Exception e) {
-            text = new Text("connection failed");
-        }
-        Button quit = new Button("quit");
-        Button ready = new Button("Ready");
+            stage.show();
+            Text text = null;
+            Text playersConnected = new Text("nobody has connected");
+            VBox vBox = null;
+            Button quit = new Button("quit");
+            Button ready = new Button("Ready");
+            //todo: we need to figure out what is wrong with the code
+            //  send help abhik
+
+            /**
+             * There is a lot of problems with it just spazing out and not connecting
+             * it will not respond and i do not know why
+             */
+//        while (true) {
 //            try {
-//                playersConnected = new Text(in.readUTF());
+//                String line = in.readUTF();
+//                playersReady.setText(line);
 //            } catch (IOException e) {
-//
+//                e.printStackTrace();
 //            }
 
-
-
-        vBox = new VBox();
-        vBox.getChildren().addAll(text, quit, ready/*, playersConnected*/);
-//        vBox.setSpacing(10);
-        Group root = new Group(vBox);
-
-        Scene scene = new Scene(root, 400, 400);
-
-        quit.setOnAction((ActionEvent e) -> {
-            start(stage);
-
-        });
-        ready.setOnAction( (ActionEvent e) -> {
-
             try {
-                out.writeInt(1);
-                System.out.println(in.readUTF());
-
-            } catch (IOException ex) {
-                ex.printStackTrace();
+                String con = in.readUTF();
+                text = new Text(con);
+            } catch (Exception e) {
+                text = new Text("connection failed");
+                e.printStackTrace();
             }
-        });
+            quit.setOnAction((ActionEvent e) -> {
+                start(stage);
 
-        stage.setScene(scene);
-        stage.show();
+            });
+
+            ready.setOnAction((ActionEvent e) -> {
+                if (!isReady) {
+                    isReady = true;
+                    try {
+                        ready.setText("Unready");
+                        out.writeUTF("1");
+
+
+                    } catch (IOException ex) {
+                        ex.printStackTrace();
+                    }
+                } else {
+                    isReady = false;
+                    try {
+                        ready.setText("Ready");
+                        out.writeUTF("-1");
+
+                    } catch (IOException ex) {
+                        ex.printStackTrace();
+                    }
+                }
+                String line = null;
+                try {
+                    line = in.readUTF();
+                    if (line.equals("you have connected to the server"))
+                        line = in.readUTF();
+                } catch (IOException ex) {
+                    ex.printStackTrace();
+                }
+                System.out.println(line);
+                playersConnected.setText(line);
+            });
+
+            vBox = new VBox();
+            vBox.getChildren().addAll(text, quit, ready, playersConnected);
+            vBox.setSpacing(10);
+            Group root = new Group(vBox);
+            Scene scene = new Scene(root, 400, 400);
+            stage.setScene(scene);
+            stage.show();
+
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+
+
+    }
+
+    public void settingOnline(Stage primaryStage) {
+        socket = lookForServer();
+        if (socket == null) {
+            //TODO: let user know
+
+            Button back = new Button("Back");
+            Button again = new Button("Try again");
+            back.setOnAction((ActionEvent e) -> {
+                start(primaryStage);
+            });
+            again.setOnAction((ActionEvent e) ->
+            {
+                settingOnline(primaryStage);
+            });
+            Text text = new Text("You failed to connect");
+            VBox vBox = new VBox();
+            vBox.setSpacing(10);
+            vBox.getChildren().addAll(text, again, back);
+            Group group = new Group(vBox);
+            Scene scene = new Scene(group, 400, 400);
+            primaryStage.setScene(scene);
+            primaryStage.show();
+        } else online(primaryStage);
 
 
     }
