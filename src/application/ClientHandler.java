@@ -4,6 +4,7 @@ import java.io.Closeable;
 import java.io.DataInputStream;
 import java.io.DataOutputStream;
 import java.io.IOException;
+import java.net.InetAddress;
 import java.net.Socket;
 
 /**
@@ -20,29 +21,26 @@ public class ClientHandler implements Runnable {
         this.socket = s;
     }
 
+    /**
+     *
+     */
     public void run() {
         try {
             int playersReady = 0;
-            out.writeUTF("you have connected to the server");
+
             while (true) {
+                out.writeUTF("you have connected to the server");
                 Thread.sleep(5000);
-//                if (in.readInt() == 1) {
-//                    playersReady++;
-//                    System.out.println(playersReady);
-////                    out.writeUTF("players connected: "+playersReady);
-//                }
-                out.writeUTF("players connected: " + playersReady);
+
+
             }
         } catch (Exception e) {
             e.printStackTrace();
-        } finally {
-            closeQuietly(this.in);
-            closeQuietly(this.out);
-            closeQuietly(this.socket);
         }
     }
 
-    void closeQuietly(Closeable c) {
+
+    public void closeQuietly(Closeable c) {
         try {
             c.close();
         } catch (IOException ignored) {
@@ -50,3 +48,40 @@ public class ClientHandler implements Runnable {
     }
 
 }
+
+class ready implements Runnable {
+    final DataInputStream in;
+    final DataOutputStream out;
+    final Socket socket;
+
+    public ready(DataInputStream dis, DataOutputStream dos, Socket s) {
+        this.in = dis;
+        this.out = dos;
+        this.socket = s;
+    }
+
+
+    public void run() {
+        int playersReady = 0;
+        int n = 0;
+        try {
+            while (true) {
+                String line = in.readUTF();
+                System.out.println("Received " + line);
+
+                if (line != null)
+                    n = Integer.parseInt(line);
+
+                playersReady += n;
+                if (playersReady == 4) {
+                    break;
+                }
+                out.writeUTF("players connected: " + playersReady);
+            }
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+}
+
+
