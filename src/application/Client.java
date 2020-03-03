@@ -49,9 +49,7 @@ public class Client extends Application {
                 public void handle(ActionEvent e) {
                     //server = new Server("Local Host", new Player(generateEntityID(), "Player 1", "player 1"),
                     // new Player(generateEntityID(), "Player 2","player 2"));
-
                 }
-
             });
 //            p1.setOnAction(new EventHandler<ActionEvent>() {
 //                @Override
@@ -62,11 +60,11 @@ public class Client extends Application {
 //            });
             p1.setOnAction((ActionEvent e) -> {
                 //server = new Server("Local Host", new Player(generateEntityID(), "Player 1","player 1"), null);
-
-
             });
 
             online.setOnAction((ActionEvent e) -> {
+            	
+          
 //            setServer();
                 socket = lookForServer();
                 if (socket == null) {
@@ -115,7 +113,7 @@ public class Client extends Application {
     public static Socket lookForServer() {
         for (int j = 0; j < 30; j++) {
             try {
-                final Socket socket = new Socket(ipAddress, 4444);
+                final Socket socket = new Socket(ipAddress, 80);
                 in = new DataInputStream(socket.getInputStream());
                 out = new DataOutputStream(socket.getOutputStream());
                 System.out.println(in.readUTF());
@@ -151,7 +149,6 @@ public class Client extends Application {
 //            }
 
 
-
         vBox = new VBox();
         vBox.getChildren().addAll(text, quit, ready/*, playersConnected*/);
 //        vBox.setSpacing(10);
@@ -176,7 +173,5 @@ public class Client extends Application {
 
         stage.setScene(scene);
         stage.show();
-
-
     }
 }

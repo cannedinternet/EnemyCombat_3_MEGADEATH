@@ -1,7 +1,11 @@
 package application;
 
+import javafx.animation.AnimationTimer;
+import javafx.animation.Timeline;
+import javafx.scene.Scene;
 import javafx.scene.image.Image;
 import javafx.scene.layout.Pane;
+import javafx.stage.Stage;
 
 import java.io.*;
 import java.net.Inet4Address;
@@ -34,7 +38,6 @@ public class Server {
         this.player2 = player2;
         lastEntityID = 0;
     }
-
 
     public Server(String ip) {
         this.ip = ip;
@@ -106,7 +109,36 @@ public class Server {
         return new Image(getClass().getResourceAsStream("/" + spriteID + ".png"));
     }
 
-    //GIMME ANIMATION TIMER
+    public void gameLoop(Stage game, String mapID) {
+    	
+    	buildMap(mapID);
+    	
+    	AnimationTimer loop = new AnimationTimer() {
+    		private long lastUpdate ;
+    	    private double speed = 50 ; // pixels per second -- generic right now should be changed
+
+    	    @Override
+    	    public void start() {
+    	        lastUpdate = System.nanoTime();
+    	        super.start();
+    	    }
+
+    	    @Override
+    	    public void handle(long now) {
+    	        long elapsedNanoSeconds = now - lastUpdate ;
+    	        double elapsedSeconds = elapsedNanoSeconds / 1_000_000_000.0 ; // needs to be looked into - used for handling inconsistencies between frame timings
+    		
+    	        
+    	        
+    	        lastUpdate = now;
+    	    }
+    	};
+    	
+    	Scene scene = new Scene(map, 1920, 1080);
+    	game.setScene(scene);
+    	game.show();
+		loop.start();
+    }
 
     public static void serverStart() {
         ServerSocket serverSocket = null;
@@ -116,8 +148,8 @@ public class Server {
             System.out.println("Starting server on " + serverSocket.getLocalSocketAddress());
             Socket socket = null;
 //            int playersReady = 0;
-            while (  true) {
-                try {
+            while (true) {
+                try {                	
                     socket = serverSocket.accept();
                     DataInputStream in = new DataInputStream(socket.getInputStream());
                     DataOutputStream out = new DataOutputStream(socket.getOutputStream());
