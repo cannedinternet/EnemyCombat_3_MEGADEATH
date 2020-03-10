@@ -48,11 +48,11 @@ public class ClientHandler implements Runnable {
     }
 
 }
-
 class ready implements Runnable {
     final DataInputStream in;
     final DataOutputStream out;
     final Socket socket;
+     public static int playersReady;
 
     public ready(DataInputStream dis, DataOutputStream dos, Socket s) {
         this.in = dis;
@@ -62,7 +62,6 @@ class ready implements Runnable {
 
 
     public void run() {
-        int playersReady = 0;
         int n = 0;
         try {
             while (true) {
@@ -76,7 +75,7 @@ class ready implements Runnable {
                 if (playersReady == 4) {
                     break;
                 }
-                out.writeUTF("players connected: " + playersReady);
+                out.writeChars("players ready: " + playersReady);
             }
         } catch (IOException e) {
             e.printStackTrace();
