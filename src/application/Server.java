@@ -190,6 +190,7 @@ public class Server extends Application{
     }
     @Override
     public void start(Stage primaryStage) throws Exception {
+    	System.out.print("SKIP SERVER LAUNCH? (Y/N)   ");
 	    primaryStage.setTitle("My First JavaFX App");
 	
 	    primaryStage.show();
@@ -199,7 +200,7 @@ public class Server extends Application{
     	System.out.print("SKIP SERVER LAUNCH? (Y/N)   ");
     	Scanner s = new Scanner(System.in);
     	if(s.next().equals("Y"))
-    		launch(args);
+    		Game.m(args);
     	else
     		serverStart();
     }
