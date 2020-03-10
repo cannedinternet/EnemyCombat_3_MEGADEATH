@@ -1,5 +1,6 @@
 package application;
 
+import javafx.application.Application;
 import javafx.animation.AnimationTimer;
 import javafx.animation.Timeline;
 import javafx.scene.Scene;
@@ -13,8 +14,9 @@ import java.net.InetAddress;
 import java.net.ServerSocket;
 import java.net.Socket;
 import java.util.HashMap;
+import java.util.Scanner;
 
-public class Server {
+public class Server extends Application{
     //Socket
     private String ip;
     private Socket socket;
@@ -110,7 +112,7 @@ public class Server {
     }
 
     public void gameLoop(Stage game, String mapID) {
-    	
+    	System.out.println("gl");
     	buildMap(mapID);
     	
     	AnimationTimer loop = new AnimationTimer() {
@@ -186,9 +188,19 @@ public class Server {
         } catch (IOException ignored) {
         }
     }
+    @Override
+    public void start(Stage primaryStage) throws Exception {
+	    primaryStage.setTitle("My First JavaFX App");
+	
+	    primaryStage.show();
+	}
 
     public static void main(String[] args) {
-        serverStart();
+    	System.out.print("SKIP SERVER LAUNCH? (Y/N)   ");
+    	Scanner s = new Scanner(System.in);
+    	if(s.next().equals("Y"))
+    		launch(args);
+    	else
+    		serverStart();
     }
 }
-
