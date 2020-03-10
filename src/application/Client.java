@@ -120,9 +120,7 @@ public class Client extends Application {
         return new Image(getClass().getResourceAsStream("/" + spriteID + ".png"));
     }
 
-    public static void main(String[] args) {
-        launch(args);
-    }
+
 
     public static Socket lookForServer() {
         for (int j = 0; j < 5; j++) { //TODO: change the counter to a resonable amoount.
@@ -149,17 +147,13 @@ public class Client extends Application {
         try {
             stage.show();
             Text text = null;
-            Text playersConnected = new Text("nobody has connected");
+            Text playersConnected = new Text("nobody is ready");
             VBox vBox = null;
             Button quit = new Button("quit");
             Button ready = new Button("Ready");
             //todo: we need to figure out what is wrong with the code
             //  send help abhik
 
-            /**
-             * There is a lot of problems with it just spazing out and not connecting
-             * it will not respond and i do not know why
-             */
 //        while (true) {
 //            try {
 //                String line = in.readUTF();
@@ -253,5 +247,11 @@ public class Client extends Application {
         } else online(primaryStage);
 
 
+    }
+
+
+
+    public static void main(String[] args) {
+        launch(args);
     }
 }
