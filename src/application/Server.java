@@ -1,5 +1,7 @@
 package application;
 
+import application.ClientHandler;
+
 import javafx.scene.image.Image;
 import javafx.scene.layout.Pane;
 
@@ -9,6 +11,8 @@ import java.net.InetAddress;
 import java.net.ServerSocket;
 import java.net.Socket;
 import java.util.HashMap;
+
+import static application.ready.playersReady;
 
 public class Server {
     //Socket
@@ -111,7 +115,8 @@ public class Server {
     public static void serverStart()  {
         ServerSocket serverSocket = null;
         try {
-            serverSocket = new ServerSocket(80, 5, InetAddress.getByAddress(new byte[4]));
+            int backlog = 2;
+            serverSocket = new ServerSocket(80, backlog, InetAddress.getByAddress(new byte[4]));
             //noinspection InfiniteLoopStatement
             System.out.println("Starting server on " + serverSocket.getLocalSocketAddress());
             Socket socket = null;
@@ -127,6 +132,13 @@ public class Server {
                     Thread readyThread = new Thread((new ready(in, out, socket)), "readyThread");
                     joinningThread.start();
                     readyThread.start();
+
+                    if(playersReady == backlog)
+                    {
+                        joinningThread.suspend();
+                    }
+
+
 
 //                    if(in.readInt() == 1)
 //                    {
