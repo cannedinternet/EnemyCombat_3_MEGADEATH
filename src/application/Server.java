@@ -1,5 +1,6 @@
 package application;
 
+import application.ClientHandler;
 import javafx.application.Application;
 import javafx.animation.AnimationTimer;
 import javafx.animation.Timeline;
@@ -15,6 +16,8 @@ import java.net.ServerSocket;
 import java.net.Socket;
 import java.util.HashMap;
 import java.util.Scanner;
+
+import static application.ready.playersReady;
 
 public class Server extends Application{
     //Socket
@@ -111,6 +114,15 @@ public class Server extends Application{
         return new Image(getClass().getResourceAsStream("/" + spriteID + ".png"));
     }
 
+    //GIMME ANIMATION TIMER
+
+    public static void serverStart()  {
+        ServerSocket serverSocket = null;
+        try {
+            int backlog = 2;
+            serverSocket = new ServerSocket(80, backlog, InetAddress.getByAddress(new byte[4]));
+    }
+
     public void gameLoop(Stage game, String mapID) {
     	System.out.println("gl");
     	buildMap(mapID);
@@ -157,6 +169,17 @@ public class Server extends Application{
                     DataOutputStream out = new DataOutputStream(socket.getOutputStream());
                     String name = "client-" + socket.getRemoteSocketAddress().toString();
                     System.out.println(name);
+                    Thread joinningThread = new Thread(new ClientHandler(in, out, socket), name);
+                    Thread readyThread = new Thread((new ready(in, out, socket)), "readyThread");
+                    joinningThread.start();
+                    readyThread.start();
+
+                    if(playersReady == backlog)
+                    {
+                        joinningThread.suspend();
+                    }
+
+
                     Thread clientThread = new Thread(new ClientHandler(in, out, socket), name);
                     clientThread.start();
 //                    if(in.readInt() == 1)
@@ -188,6 +211,12 @@ public class Server extends Application{
         } catch (IOException ignored) {
         }
     }
+
+    public static void main(String[] args) {
+        serverStart();
+    }
+}
+
     @Override
     public void start(Stage primaryStage) throws Exception {
     	System.out.print("SKIP SERVER LAUNCH? (Y/N)   ");
