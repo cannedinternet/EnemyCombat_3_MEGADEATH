@@ -1,9 +1,13 @@
 package application;
 
 import application.ClientHandler;
-
+import javafx.application.Application;
+import javafx.animation.AnimationTimer;
+import javafx.animation.Timeline;
+import javafx.scene.Scene;
 import javafx.scene.image.Image;
 import javafx.scene.layout.Pane;
+import javafx.stage.Stage;
 
 import java.io.*;
 import java.net.Inet4Address;
@@ -11,10 +15,11 @@ import java.net.InetAddress;
 import java.net.ServerSocket;
 import java.net.Socket;
 import java.util.HashMap;
+import java.util.Scanner;
 
 import static application.ready.playersReady;
 
-public class Server {
+public class Server extends Application{
     //Socket
     private String ip;
     private Socket socket;
@@ -38,7 +43,6 @@ public class Server {
         this.player2 = player2;
         lastEntityID = 0;
     }
-
 
     public Server(String ip) {
         this.ip = ip;
@@ -117,12 +121,49 @@ public class Server {
         try {
             int backlog = 2;
             serverSocket = new ServerSocket(80, backlog, InetAddress.getByAddress(new byte[4]));
+    }
+
+    public void gameLoop(Stage game, String mapID) {
+    	System.out.println("gl");
+    	buildMap(mapID);
+    	
+    	AnimationTimer loop = new AnimationTimer() {
+    		private long lastUpdate ;
+    	    private double speed = 50 ; // pixels per second -- generic right now should be changed
+
+    	    @Override
+    	    public void start() {
+    	        lastUpdate = System.nanoTime();
+    	        super.start();
+    	    }
+
+    	    @Override
+    	    public void handle(long now) {
+    	        long elapsedNanoSeconds = now - lastUpdate ;
+    	        double elapsedSeconds = elapsedNanoSeconds / 1_000_000_000.0 ; // needs to be looked into - used for handling inconsistencies between frame timings
+    		
+    	        
+    	        
+    	        lastUpdate = now;
+    	    }
+    	};
+    	
+    	Scene scene = new Scene(map, 1920, 1080);
+    	game.setScene(scene);
+    	game.show();
+		loop.start();
+    }
+
+    public static void serverStart() {
+        ServerSocket serverSocket = null;
+        try {
+            serverSocket = new ServerSocket(4444, 5, InetAddress.getByAddress(new byte[4]));
             //noinspection InfiniteLoopStatement
             System.out.println("Starting server on " + serverSocket.getLocalSocketAddress());
             Socket socket = null;
 //            int playersReady = 0;
-            while (  true) {
-                try {
+            while (true) {
+                try {                	
                     socket = serverSocket.accept();
                     DataInputStream in = new DataInputStream(socket.getInputStream());
                     DataOutputStream out = new DataOutputStream(socket.getOutputStream());
@@ -139,7 +180,8 @@ public class Server {
                     }
 
 
-
+                    Thread clientThread = new Thread(new ClientHandler(in, out, socket), name);
+                    clientThread.start();
 //                    if(in.readInt() == 1)
 //                    {
 //                        playersReady++;
@@ -175,3 +217,20 @@ public class Server {
     }
 }
 
+    @Override
+    public void start(Stage primaryStage) throws Exception {
+    	System.out.print("SKIP SERVER LAUNCH? (Y/N)   ");
+	    primaryStage.setTitle("My First JavaFX App");
+	
+	    primaryStage.show();
+	}
+
+    public static void main(String[] args) {
+    	System.out.print("SKIP SERVER LAUNCH? (Y/N)   ");
+    	Scanner s = new Scanner(System.in);
+    	if(s.next().equals("Y"))
+    		Game.m(args);
+    	else
+    		serverStart();
+    }
+}

@@ -49,9 +49,7 @@ public class Client extends Application {
                 public void handle(ActionEvent e) {
                     //server = new Server("Local Host", new Player(generateEntityID(), "Player 1", "player 1"),
                     // new Player(generateEntityID(), "Player 2","player 2"));
-
                 }
-
             });
 //            p1.setOnAction(new EventHandler<ActionEvent>() {
 //                @Override
@@ -62,8 +60,6 @@ public class Client extends Application {
 //            });
             p1.setOnAction((ActionEvent e) -> {
                 //server = new Server("Local Host", new Player(generateEntityID(), "Player 1","player 1"), null);
-
-
             });
 
             online.setOnAction((ActionEvent e) -> {
@@ -89,6 +85,22 @@ public class Client extends Application {
 //                    primaryStage.show()
 //                    ;
 //                } else online(primaryStage);
+
+            });
+
+            online.setOnAction((ActionEvent e) -> {
+            	
+          
+//            setServer();
+                socket = lookForServer();
+                if (socket == null) {
+                    // TODO: let user know
+                    Text text = new Text("You failed to connect");
+                    Group group = new Group(text);
+                    Scene scene = new Scene(group);
+                    primaryStage.setScene(scene);
+                    primaryStage.show();
+                } else online(primaryStage);
             });
             Button quit = new Button("quit");
 
@@ -217,10 +229,36 @@ public class Client extends Application {
 
         } catch (Exception e) {
             e.printStackTrace();
+          
+    public static Socket lookForServer() {
+        for (int j = 0; j < 30; j++) {
+            try {
+                final Socket socket = new Socket(ipAddress, 80);
+                in = new DataInputStream(socket.getInputStream());
+                out = new DataOutputStream(socket.getOutputStream());
+                System.out.println(in.readUTF());
+                return socket;
+            } catch (Exception e) {
+                //e.printStackTrace();
+            }
+            try {
+                Thread.sleep(1000);
+            } catch (InterruptedException e) {
+            }
         }
-
-
+        return null;
     }
+
+    public void online(Stage stage) {
+        Text text = null;
+//        Text playersConnected = null;
+        VBox vBox = null;
+
+        try {
+            String con = in.readUTF();
+            text = new Text(con);
+        } catch (Exception e) {
+            text = new Text("connection failed");
 
     public void settingOnline(Stage primaryStage) {
         socket = lookForServer();
@@ -245,13 +283,12 @@ public class Client extends Application {
             primaryStage.setScene(scene);
             primaryStage.show();
         } else online(primaryStage);
-
-
     }
-
-
 
     public static void main(String[] args) {
         launch(args);
+
+        stage.setScene(scene);
+        stage.show();
     }
 }

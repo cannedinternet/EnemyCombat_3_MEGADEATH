@@ -41,6 +41,29 @@ public class ClientHandler implements Runnable {
 
 
     public void closeQuietly(Closeable c) {
+    public void run() {
+        try {
+            int playersReady = 0;
+            out.writeUTF("you have connected to the server");
+            while (true) {
+                Thread.sleep(5000);
+//                if (in.readInt() == 1) {
+//                    playersReady++;
+//                    System.out.println(playersReady);
+////                    out.writeUTF("players connected: "+playersReady);
+//                }
+                out.writeUTF("players connected: " + playersReady);
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        } finally {
+            closeQuietly(this.in);
+            closeQuietly(this.out);
+            closeQuietly(this.socket);
+        }
+    }
+
+    void closeQuietly(Closeable c) {
         try {
             c.close();
         } catch (IOException ignored) {
@@ -82,5 +105,3 @@ class ready implements Runnable {
         }
     }
 }
-
-
