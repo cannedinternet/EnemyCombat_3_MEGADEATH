@@ -90,17 +90,17 @@ public class Client extends Application {
 
             online.setOnAction((ActionEvent e) -> {
             	
-          
+          settingOnline(primaryStage);
 //            setServer();
-                socket = lookForServer();
-                if (socket == null) {
-                    // TODO: let user know
-                    Text text = new Text("You failed to connect");
-                    Group group = new Group(text);
-                    Scene scene = new Scene(group);
-                    primaryStage.setScene(scene);
-                    primaryStage.show();
-                } else online(primaryStage);
+//                 socket = lookForServer();
+//                 if (socket == null) {
+//                     // TODO: let user know
+//                     Text text = new Text("You failed to connect");
+//                     Group group = new Group(text);
+//                     Scene scene = new Scene(group);
+//                     primaryStage.setScene(scene);
+//                     primaryStage.show();
+//                 } else online(primaryStage);
             });
             Button quit = new Button("quit");
 
